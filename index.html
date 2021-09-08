@@ -77,14 +77,39 @@
     }
     launch();
     //Loading Assests 
-    function preload() {
+    async function preload() {
       this.load.image('background', 'assests/BG.png');
       this.load.image('ground', 'assests/Tiles/Tile (2).png');
-      this.load.image('player', 'assests/avaa.png');
+      // this.load.image('player', 'assests/avaa.png');
+      that=this;
+      this.load.image('competitor', 'assests/avaa.png');
+      // fetch player SVG
+      const numericTraits=[1, 5, 99, 29, 1, 1]; // UI to change the traits
+      const equippedWearables=[23, 8, 4, 43, 0, 4, 0, 1, 0, 0, 0, 3, 7, 0, 0, 0];
+
+      const rawSVG=await Moralis.Cloud.run("getSVG", { numericTraits: numericTraits, equippedWearables: equippedWearables })
+
+      const svgBlob=new Blob([rawSVG], { type: "image/svg+xml;charset=utf-8" })
+      const url=URL.createObjectURL(svgBlob)
+
+      this.load.image('player', url);
+
+      this.load.on('filecomplete', function () {
+
+        initPlayer()
+      }, this);
+
+      this.load.start()
     }
     //Initial setup 
+    async function initPlayer() {
+      player=that.physics.add.sprite(500, 250, 'player').setScale(1).refreshBody();
+      player.setBounce(0.3);
+      that.physics.add.collider(player, platforms);
+    }
     async function create() {
       this.add.image(400, 300, 'background').setScale(0.55);
+      platforms=this.physics.add.staticGroup();
       platforms=this.physics.add.staticGroup();
       platforms.create(535, 400, 'ground').setScale(0.5).refreshBody();
       platforms.create(600, 400, 'ground').setScale(0.5).refreshBody();
@@ -92,14 +117,14 @@
       platforms.create(470, 400, 'ground').setScale(0.5).refreshBody();
 
 
-      player=this.physics.add.sprite(500, 240, 'player').setScale(0.5).refreshBody();
-      player.setBounce(0.6);
+      //player=this.physics.add.sprite(500, 240, 'player').setScale(0.5).refreshBody();
+      // player.setBounce(0.6);
       //player.setCollideWorldBounds(true);
 
       cursors=this.input.keyboard.createCursorKeys();
 
 
-      this.physics.add.collider(player, platforms);
+      // this.physics.add.collider(player, platforms);
       let user=Moralis.User.current();
       let query=new Moralis.Query('PlayerPosition');
       let subscription=await query.subscribe();
