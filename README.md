@@ -8,3 +8,6 @@ Implementred using Vanilla Boiler Plate Code from Moralis Documentation
 3. As the application is MultiUser So 2 Users can Play at a same time and their relative positions can be seen from both the ends shared using NFT'S between the two users  
 4. User can make the Mario Jump , Move left or Right with Arrow Keys of the Keyboard and Further more transitions can also be seen . 
 5 . Using Cloud Functions every user gets diffrent Avatar at same time 
+
+
+
